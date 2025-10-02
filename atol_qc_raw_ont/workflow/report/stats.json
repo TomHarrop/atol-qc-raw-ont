@@ -1,0 +1,6 @@
+{
+    "base_count": {{ params.stats.base_count }},
+    "read_count": {{ params.stats.read_count }},
+    "mean_gc_content": {{ params.stats.mean_gc_content }},
+    "n50_length": null
+}

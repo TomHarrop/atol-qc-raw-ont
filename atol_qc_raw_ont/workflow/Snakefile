@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+
+import tempfile
+
+globals().update(config)
+workingdir = tempfile.mkdtemp()
+logger.warning(f"Using {workingdir} for intermediate files")
+
+raise ValueError(config)

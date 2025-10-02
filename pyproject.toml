@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+dependencies = ["snakemake>=9.11.6,<10"]
+name = "atol-qc-raw-ont"
+dynamic = ["version"]
+description = "python3 wrapper for AToL raw read QC steps (ONT version)"
+readme = "README.md"
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+authors = [{ name = "Tom Harrop", email = "tharrop@unimelb.edu.au" }]
+requires-python = ">=3.12,<3.13"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Private :: Do Not Upload",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.scripts]
+atol-qc-raw-ont = "atol_qc_raw_ont.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/tomharrop/atol-qc-raw-ont"
+
+[tool.setuptools]
+packages = ["atol_qc_raw_ont"]
+
+
+[tool.setuptools.package-data]
+atol_qc_raw_ont = [
+    "workflow/Snakefile",
+]
+
+[tool.setuptools.exclude-package-data]
+"*" = ["extras/*"]
+
+[tool.setuptools_scm]
