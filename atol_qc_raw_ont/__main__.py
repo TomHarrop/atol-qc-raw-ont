@@ -12,6 +12,7 @@ from snakemake.api import (
     ConfigSettings,
     ExecutionSettings,
     OutputSettings,
+    StorageSettings,
 )
 from snakemake.settings.enums import Quietness
 
@@ -20,21 +21,39 @@ def parse_arguments():
     parser = argparse.ArgumentParser()
 
     # options
+    parser.add_argument(
+        "--min-length",
+        type=int,
+        default=1,
+        dest="min_length",
+        help="Minimum length read to output. Default is 1, i.e. keep all reads.",
+    )
+
     parser.add_argument("-t", "--threads", type=int, default=16, dest="threads")
     parser.add_argument("-n", help="Dry run", dest="dry_run", action="store_true")
 
     # inputs
     input_group = parser.add_argument_group("Input")
 
+    # test data look to be about 30,000 reads per fastq file
     input_group.add_argument(
-        "--in", required=True, type=Path, help="Read 1 input", dest="r1"
+        "--in",
+        required=True,
+        type=Path,
+        help="Reads in fastq.gz. Multiple files are accepted.",
+        dest="reads",
+        nargs="+",  # should always be a list of Path objects
     )
 
     # outputs
     output_group = parser.add_argument_group("Output")
 
     output_group.add_argument(
-        "--out", required=True, type=Path, help="Read 1 output", dest="r1_out"
+        "--out",
+        required=True,
+        type=Path,
+        help="Combined output in fastq.gz",
+        dest="reads_out",
     )
     output_group.add_argument(
         "--stats", required=True, type=Path, help="Stats output (json)", dest="stats"
@@ -80,7 +99,15 @@ def main():
     args.stats_template = stats_template
 
     # control output
-    output_settings = OutputSettings(quiet={Quietness.RULES, Quietness.HOST})
+    output_settings = OutputSettings(
+        quiet={
+            # Quietness.RULES,
+            Quietness.HOST,
+            Quietness.REASON,
+            Quietness.PROGRESS,
+        },
+        printshellcmds=True,
+    )
 
     # set cores.
     resource_settings = ResourceSettings(
@@ -94,12 +121,14 @@ def main():
     # other settings
     config_settings = ConfigSettings(config=args.__dict__)
     execution_settings = ExecutionSettings(args.__dict__, lock=False)
+    storage_settings = StorageSettings(notemp=True)
 
     with SnakemakeApi(output_settings) as snakemake_api:
         workflow_api = snakemake_api.workflow(
             snakefile=snakefile,
             resource_settings=resource_settings,
             config_settings=config_settings,
+            storage_settings=storage_settings,
         )
         dag = workflow_api.dag()
         dag.execute_workflow(

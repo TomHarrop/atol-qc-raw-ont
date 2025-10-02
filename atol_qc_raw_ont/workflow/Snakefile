@@ -1,9 +1,137 @@
 #!/usr/bin/env python3
 
 import tempfile
+from pathlib import PosixPath
+
+
+def map_read_file_to_name(reads):
+    if not isinstance(reads, list):
+        raise ValueError("Input must be a list of read files.")
+
+    read_file_to_name = {}
+
+    for file in reads:
+        if not isinstance(file, PosixPath):
+            raise ValueError(f"File {file} is not a Path() object")
+
+        name = file.name.split(".")[0]
+
+        if name in read_file_to_name:
+            logger.error(f"Read files:     {reads}")
+            logger.error(f"Existing names: {sorted(set(read_file_to_name.keys()))}")
+            logger.error(f"Duplicate name: {name}")
+            raise ValueError(f"The name of readfile {file} is not unique.")
+
+        read_file_to_name[name] = file
+
+    return read_file_to_name
+
 
 globals().update(config)
-workingdir = tempfile.mkdtemp()
+# workingdir = tempfile.mkdtemp()
+workingdir = Path("test-output", "tmp")
+
+
 logger.warning(f"Using {workingdir} for intermediate files")
 
-raise ValueError(config)
+if not logs_directory:
+    logger.warning(f"Not keeping logs")
+    logs_directory = workingdir
+else:
+    logger.warning(f"Saving logs to {logs_directory}")
+
+
+# raise ValueError(config)
+
+read_file_to_name = map_read_file_to_name(reads)
+all_names = sorted(set(read_file_to_name.keys()))
+
+
+wildcard_constraints:
+    read_file="|".join(all_names),
+
+
+rule target:
+    input:
+        reads_out,
+
+
+# '--target_bases 50000000 ' # this is almost 100x for diatom. 10 GB is approx
+# 50x for amel
+
+
+rule compress_output:
+    input:
+        Path(workingdir, "filtlong.fastq"),
+    output:
+        reads_out,
+    log:
+        Path(logs_directory, "compress_output.log"),
+    threads: workflow.cores - 1
+    shell:
+        "cat {input} "
+        "| "
+        "pigz -p {threads} "
+        "-9 "
+        "> {output} "
+        "2> {log}"
+
+
+rule filtlong:
+    input:
+        Path(workingdir, "porechop.fastq"),
+    output:
+        pipe(Path(workingdir, "filtlong.fastq")),
+    params:
+        min_length=min_length,
+    log:
+        Path(logs_directory, "filtlong.log"),
+    shell:
+        "filtlong "
+        "--min_length {params.min_length} "
+        "{input} "
+        ">> {output} "
+        "2> {log}"
+
+
+# filtlong reads the input file twice, so you have to write it to disk :(
+rule collect_porechop_results:
+    input:
+        expand(Path(workingdir, "porechop", "{read_file}.fastq"), read_file=all_names),
+    output:
+        temp(Path(workingdir, "porechop.fastq")),
+    shell:
+        "cat {input} > {output}"
+
+
+rule porechop:
+    input:
+        Path(workingdir, "collect_reads", "{read_file}.fastq"),
+    output:
+        temp(Path(workingdir, "porechop", "{read_file}.fastq")),
+    log:
+        Path(logs_directory, "porechop", "{read_file}.log"),
+    threads: 1
+    shell:
+        "porechop "
+        "-i {input} "
+        "-o {output} "
+        "--verbosity 1 "
+        "--threads {threads} "
+        "--discard_middle "
+        "&> {log}"
+
+
+rule collect_reads:
+    input:
+        lambda wildcards: read_file_to_name[wildcards.read_file],
+    output:
+        temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
+    log:
+        Path(logs_directory, "collect_reads", "{read_file}.log"),
+    threads: 1
+    shell:
+        "pigz -p 1 -d "
+        "< {input} "
+        "> {output} "
+        "2>{log}"
