@@ -59,7 +59,7 @@ rule target:
 # '--target_bases 50000000 ' # this is almost 100x for diatom. 10 GB is approx
 # 50x for amel
 
-
+# TODO: use reformat.sh here to collect output stats
 rule compress_output:
     input:
         Path(workingdir, "filtlong.fastq"),
@@ -122,6 +122,7 @@ rule porechop:
         "&> {log}"
 
 
+# TODO: use reformat.sh here to collect input stats
 rule collect_reads:
     input:
         lambda wildcards: read_file_to_name[wildcards.read_file],
