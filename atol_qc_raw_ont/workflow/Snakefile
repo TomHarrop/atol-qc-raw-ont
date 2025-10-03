@@ -2,10 +2,34 @@
 
 import tempfile
 from pathlib import PosixPath
+from functools import cache
+
+
+def get_readfile(wildcards):
+    if reads_tarfile:
+        readfile = Path(workingdir, "readfiles", "{read_file}.fastq.gz")
+    elif reads:
+        read_file_to_name = map_read_file_to_name(reads)
+        readfile = read_file_to_name[wildcards.read_file]
+    return readfile
+
+
+def get_all_names(wildcards):
+    if reads_tarfile:
+        all_names = get_tarfile_names(wildcards)
+    elif reads:
+        read_file_to_name = map_read_file_to_name(reads)
+        all_names = sorted(set(read_file_to_name.keys()))
+
+    wildcard_constraints:
+        read_file="|".join(all_names),
+
+    return all_names
 
 
 def get_porechop_results(wildcards):
-    all_names = get_readfile_names(wildcards)
+    all_names = get_all_names(wildcards)
+
     porechop_results = expand(
         Path(workingdir, "porechop", "{read_file}.fastq"), read_file=all_names
     )
@@ -13,6 +37,10 @@ def get_porechop_results(wildcards):
 
 
 def map_read_file_to_name(reads):
+    """
+    This gets run twice, but if I try to cache it I get
+      TypeError: unhashable type: 'list'
+    """
     if not isinstance(reads, list):
         raise ValueError("Input must be a list of read files.")
 
@@ -49,25 +77,8 @@ else:
 
 
 if reads_tarfile:
+
     include: "rules/single_tarfile.smk"
-
-elif reads:
-    read_file_to_name = map_read_file_to_name(reads)
-
-    def get_readfile_names(wildcards):
-        all_names = sorted(set(read_file_to_name.keys()))
-
-        wildcard_constraints:
-            read_file="|".join(all_names)
-
-        return all_names
-
-    def get_readfile(wildcards):
-        return read_file_to_name[wildcards.read_file]
-
-else:
-    raise ValueError("How did I get here?")
-
 
 
 # TODO: use reformat.sh here to collect output stats
@@ -153,4 +164,3 @@ rule target:
     default_target: True
     input:
         reads_out,
-        # rules.expand_tarfile.output,
