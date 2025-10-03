@@ -36,9 +36,17 @@ def parse_arguments():
     input_group = parser.add_argument_group("Input")
 
     # test data look to be about 30,000 reads per fastq file
-    input_group.add_argument(
-        "--in",
-        required=True,
+    reads_group = input_group.add_mutually_exclusive_group(required=True)
+
+    reads_group.add_argument(
+        "--tarfile",
+        type=Path,
+        help="Reads in a single tarfile. Will be searched for filenames ending in fastq.gz.",
+        dest="reads_tarfile",
+    )
+
+    reads_group.add_argument(
+        "--fastqfiles",
         type=Path,
         help="Reads in fastq.gz. Multiple files are accepted.",
         dest="reads",
@@ -120,7 +128,7 @@ def main():
 
     # other settings
     config_settings = ConfigSettings(config=args.__dict__)
-    execution_settings = ExecutionSettings(args.__dict__, lock=False)
+    execution_settings = ExecutionSettings(lock=False)
     storage_settings = StorageSettings(notemp=True)
 
     with SnakemakeApi(output_settings) as snakemake_api:

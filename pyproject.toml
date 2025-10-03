@@ -31,7 +31,11 @@ packages = ["atol_qc_raw_ont"]
 
 
 [tool.setuptools.package-data]
-atol_qc_raw_ont = ["workflow/Snakefile"]
+atol_qc_raw_ont = [
+    "workflow/Snakefile",
+    "workflow/rules/single_tarfile.smk",
+    "workflow/report/stats.json",
+]
 
 [tool.setuptools.exclude-package-data]
 "*" = ["extras/*"]

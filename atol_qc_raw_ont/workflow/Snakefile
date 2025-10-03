@@ -4,6 +4,14 @@ import tempfile
 from pathlib import PosixPath
 
 
+def get_porechop_results(wildcards):
+    all_names = get_readfile_names(wildcards)
+    porechop_results = expand(
+        Path(workingdir, "porechop", "{read_file}.fastq"), read_file=all_names
+    )
+    return porechop_results
+
+
 def map_read_file_to_name(reads):
     if not isinstance(reads, list):
         raise ValueError("Input must be a list of read files.")
@@ -31,7 +39,6 @@ globals().update(config)
 # workingdir = tempfile.mkdtemp()
 workingdir = Path("test-output", "tmp")
 
-
 logger.warning(f"Using {workingdir} for intermediate files")
 
 if not logs_directory:
@@ -41,23 +48,27 @@ else:
     logger.warning(f"Saving logs to {logs_directory}")
 
 
-# raise ValueError(config)
+if reads_tarfile:
+    include: "rules/single_tarfile.smk"
 
-read_file_to_name = map_read_file_to_name(reads)
-all_names = sorted(set(read_file_to_name.keys()))
+elif reads:
+    read_file_to_name = map_read_file_to_name(reads)
+
+    def get_readfile_names(wildcards):
+        all_names = sorted(set(read_file_to_name.keys()))
+
+        wildcard_constraints:
+            read_file="|".join(all_names)
+
+        return all_names
+
+    def get_readfile(wildcards):
+        return read_file_to_name[wildcards.read_file]
+
+else:
+    raise ValueError("How did I get here?")
 
 
-wildcard_constraints:
-    read_file="|".join(all_names),
-
-
-rule target:
-    input:
-        reads_out,
-
-
-# '--target_bases 50000000 ' # this is almost 100x for diatom. 10 GB is approx
-# 50x for amel
 
 # TODO: use reformat.sh here to collect output stats
 rule compress_output:
@@ -97,7 +108,7 @@ rule filtlong:
 # filtlong reads the input file twice, so you have to write it to disk :(
 rule collect_porechop_results:
     input:
-        expand(Path(workingdir, "porechop", "{read_file}.fastq"), read_file=all_names),
+        get_porechop_results,
     output:
         temp(Path(workingdir, "porechop.fastq")),
     shell:
@@ -125,7 +136,7 @@ rule porechop:
 # TODO: use reformat.sh here to collect input stats
 rule collect_reads:
     input:
-        lambda wildcards: read_file_to_name[wildcards.read_file],
+        get_readfile,
     output:
         temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
     log:
@@ -136,3 +147,10 @@ rule collect_reads:
         "< {input} "
         "> {output} "
         "2>{log}"
+
+
+rule target:
+    default_target: True
+    input:
+        reads_out,
+        # rules.expand_tarfile.output,
