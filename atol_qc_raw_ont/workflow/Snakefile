@@ -64,16 +64,15 @@ def map_read_file_to_name(reads):
 
 
 globals().update(config)
-# workingdir = tempfile.mkdtemp()
-workingdir = Path("test-output", "tmp")
+workingdir = tempfile.mkdtemp()
 
-logger.warning(f"Using {workingdir} for intermediate files")
+logger.debug(f"Using {workingdir} for intermediate files")
 
 if not logs_directory:
-    logger.warning(f"Not keeping logs")
+    logger.debug(f"Not keeping logs")
     logs_directory = workingdir
 else:
-    logger.warning(f"Saving logs to {logs_directory}")
+    logger.debug(f"Saving logs to {logs_directory}")
 
 
 if reads_tarfile:
@@ -81,22 +80,25 @@ if reads_tarfile:
     include: "rules/single_tarfile.smk"
 
 
-# TODO: use reformat.sh here to collect output stats
 rule compress_output:
     input:
-        Path(workingdir, "filtlong.fastq"),
+        pipe=Path(workingdir, "filtlong.fastq"),
     output:
-        reads_out,
+        reads_out=reads_out,
+        gchist=Path(logs_directory, "gchist.txt"),
     log:
-        Path(logs_directory, "compress_output.log"),
+        Path(logs_directory, "compress_output", "reformat.log"),
     threads: workflow.cores - 1
     shell:
-        "cat {input} "
-        "| "
-        "pigz -p {threads} "
-        "-9 "
-        "> {output} "
-        "2> {log}"
+        "cat {input.pipe} | "
+        "reformat.sh "
+        "in=stdin.fastq "
+        "int=f "
+        "out={output.reads_out} "
+        "gchist={output.gchist} "
+        "threads={threads} "
+        "zl=9 "
+        "2>{log}"
 
 
 rule filtlong:
@@ -144,23 +146,26 @@ rule porechop:
         "&> {log}"
 
 
-# TODO: use reformat.sh here to collect input stats
 rule collect_reads:
     input:
         get_readfile,
     output:
-        temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
+        fastq=temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
     log:
         Path(logs_directory, "collect_reads", "{read_file}.log"),
     threads: 1
     shell:
-        "pigz -p 1 -d "
-        "< {input} "
-        "> {output} "
+        "reformat.sh "
+        "in={input} "
+        "out={output.fastq} "
         "2>{log}"
+
+
+include: "rules/stats.smk"
 
 
 rule target:
     default_target: True
     input:
         reads_out,
+        stats,

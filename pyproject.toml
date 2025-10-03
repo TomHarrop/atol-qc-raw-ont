@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dependencies = ["snakemake>=9.11.6,<10"]
+dependencies = ["snakemake>=9.11.6,<10", "pandas>=2.3.3,<3"]
 name = "atol-qc-raw-ont"
 dynamic = ["version"]
 description = "python3 wrapper for AToL raw read QC steps (ONT version)"
@@ -22,6 +22,7 @@ classifiers = [
 
 [project.scripts]
 atol-qc-raw-ont = "atol_qc_raw_ont.__main__:main"
+process_step_logs = "atol_qc_raw_ont.process_step_logs:main"
 
 [project.urls]
 Homepage = "https://github.com/tomharrop/atol-qc-raw-ont"
@@ -34,6 +35,7 @@ packages = ["atol_qc_raw_ont"]
 atol_qc_raw_ont = [
     "workflow/Snakefile",
     "workflow/rules/single_tarfile.smk",
+    "workflow/rules/stats.smk",
     "workflow/report/stats.json",
 ]
 

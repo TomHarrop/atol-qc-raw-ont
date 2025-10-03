@@ -89,7 +89,7 @@ def main():
     # get the snakefile
     snakefile = Path(resources.files(__package__), "workflow", "Snakefile")
     if snakefile.is_file():
-        logger.warning(f"Using snakefile {snakefile}")
+        logger.debug(f"Using snakefile {snakefile}")
     else:
         raise FileNotFoundError("Could not find a Snakefile")
 
@@ -97,19 +97,18 @@ def main():
         resources.files(__package__), "workflow", "report", "stats.json"
     )
     if stats_template.is_file():
-        logger.warning(f"Using stats_template {stats_template}")
+        logger.debug(f"Using stats_template {stats_template}")
     else:
         raise FileNotFoundError("Could not find a stats_template")
 
     # get arguments
     args = parse_arguments()
-    logger.warning(f"Entrypoint args:\n    {args}")
+    logger.debug(f"Entrypoint args:\n    {args}")
     args.stats_template = stats_template
 
     # control output
     output_settings = OutputSettings(
         quiet={
-            # Quietness.RULES,
             Quietness.HOST,
             Quietness.REASON,
             Quietness.PROGRESS,
@@ -129,7 +128,9 @@ def main():
     # other settings
     config_settings = ConfigSettings(config=args.__dict__)
     execution_settings = ExecutionSettings(lock=False)
-    storage_settings = StorageSettings(notemp=True)
+    storage_settings = StorageSettings(
+        # notemp=True
+    )
 
     with SnakemakeApi(output_settings) as snakemake_api:
         workflow_api = snakemake_api.workflow(
