@@ -19,6 +19,12 @@ apptainer exec \
 
 ## Usage
 
+> [!TIP]
+> 
+> Set your locale e.g. using `--env LC_ALL=C` or `APPTAINERENV_LC_ALL=C`.
+> Otherwise `filtlong` segfaults with an error like
+> `locale::facet::_S_create_c_locale name not valid`.
+
 TODO
 
 ```bash
