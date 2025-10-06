@@ -23,7 +23,7 @@ apptainer exec \
 > 
 > **Set your locale e.g. using `--env LC_ALL=C` or `APPTAINERENV_LC_ALL=C`**.
 > 
-> Otherwise filtlong [segfaults](https://github.com/rrwick/Filtlong/issues/48)
+> Otherwise filtlong [crashes](https://github.com/rrwick/Filtlong/issues/48)
 > with an error like `locale::facet::_S_create_c_locale name not valid`.
 > 
 
