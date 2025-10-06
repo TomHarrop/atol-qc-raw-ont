@@ -113,7 +113,7 @@ rule grep_logs:
         # awk -F '[[:space:]]{2,}' means separated by two or more spaces
         "grep '^\({log_regex}\)' {input} "
         "| "
-        "awk -F '[[:space:]]{{2,}}' "
+        "gawk -F '[[:space:]]{{2,}}' "
         "'{{print $1, $2, $3}}' "
         "OFS='\t' "
         "> {output} "
