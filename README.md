@@ -29,9 +29,6 @@ apptainer exec \
 
 ### With a single tar file containing `*.fastq.gz` read files
 
-**The current version of `atol-qc-raw-ont` uses `find -name "*.fastq.gz"` to
-find read files, so anything named differently will be missed.**
-
 ```bash
 atol-qc-raw-ont \
 		--tarfile data/reads_in_directory.tar \
@@ -40,6 +37,12 @@ atol-qc-raw-ont \
 		--logs results/logs \
 		--min-length 1000
 ```
+
+> [!IMPORTANT]
+>
+> **The current version of `atol-qc-raw-ont` uses `find -name "*.fastq.gz"` to
+> find read files, so anything named differently will be missed.**
+
 
 ### Directly input a list of `*.fastq.gz` readfiles
 
