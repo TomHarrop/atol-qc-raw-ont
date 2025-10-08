@@ -12,7 +12,7 @@ Run short read QC on Nanopore (ONT) reads.
 
 ```bash
 apptainer exec \
-  docker://quay.io/biocontainers/atol-qc-raw-ont:0.1.0 \
+  docker://quay.io/biocontainers/atol-qc-raw-ont:0.1.3--pyhdfd78af_0 \
   atol-qc-raw-ont  
   
 ```
@@ -27,15 +27,60 @@ apptainer exec \
 > with an error like `locale::facet::_S_create_c_locale name not valid`.
 > 
 
-TODO
+### With a single tar file containing `*.fastq.gz` read files
 
 ```bash
 atol-qc-raw-ont \
+		--tarfile data/reads_in_directory.tar \
+		--out results/reads.fastq.gz \
+		--stats results/stats.json \
+		--logs results/logs \
+		--min-length 1000
+```
+
+> [!IMPORTANT]
+>
+> The current version of `atol-qc-raw-ont` uses `find -name "*.fastq.gz"` to
+> find read files, **so anything named differently will be missed.**
+
+
+### Directly input a list of read files as compressed fastq
+
+```bash
+atol-qc-raw-ont \
+		--fastqfiles \
+			data/PBE32261_pass_1cb0c50e_6d3d5e3e_129.fastq.gz \
+			data/PBE32261_pass_1cb0c50e_6d3d5e3e_55.fastq.gz \
+			data/PBE32261_pass_1cb0c50e_6d3d5e3e_269.fastq.gz \
+		--out results/reads.fastq.gz \
+		--stats results/stats.json \
+		--logs results/logs \
+		--min-length 1000
 ```
 
 ### Full usage
 
-TODO
-
 ```
+usage: atol-qc-raw-ont [-h] [--min-length MIN_LENGTH] [-t THREADS] [-n]
+                       (--tarfile READS_TARFILE | --fastqfiles READS [READS ...]) --out READS_OUT
+                       --stats STATS [--logs LOGS_DIRECTORY]
+
+options:
+  -h, --help            show this help message and exit
+  --min-length MIN_LENGTH
+                        Minimum length read to output. Default is 1, i.e. keep all reads.
+  -t THREADS, --threads THREADS
+  -n                    Dry run
+
+Input:
+  --tarfile READS_TARFILE
+                        Reads in a single tarfile. Will be searched for filenames ending in fastq.gz.
+  --fastqfiles READS [READS ...]
+                        Reads in fastq.gz. Multiple files are accepted.
+
+Output:
+  --out READS_OUT       Combined output in fastq.gz
+  --stats STATS         Stats output (json)
+  --logs LOGS_DIRECTORY
+                        Log output directory. Default: logs are discarded.
 ```
