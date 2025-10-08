@@ -44,7 +44,7 @@ atol-qc-raw-ont \
 > find read files, **so anything named differently will be missed.**
 
 
-### Directly input a list of `*.fastq.gz` readfiles
+### Directly input a list of readfiles as compressed fastq
 
 ```bash
 atol-qc-raw-ont \
