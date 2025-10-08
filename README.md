@@ -40,8 +40,8 @@ atol-qc-raw-ont \
 
 > [!IMPORTANT]
 >
-> **The current version of `atol-qc-raw-ont` uses `find -name "*.fastq.gz"` to
-> find read files, so anything named differently will be missed.**
+> The current version of `atol-qc-raw-ont` uses `find -name "*.fastq.gz"` to
+> find read files, **so anything named differently will be missed.**
 
 
 ### Directly input a list of `*.fastq.gz` readfiles
