@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.4 (2025-10-08)
+
+### Changes
+
+* Only run the workflow if files are missing.
+
 ## 0.1.3 (2025-10-08)
 
 ### Changes
