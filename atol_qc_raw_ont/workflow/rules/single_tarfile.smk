@@ -20,4 +20,4 @@ if reads_tarfile:
             "mkdir -p {output.read_dir}/ && "
             "tar -xpf {input} -C {params.tmpdir} && "
             'find {params.tmpdir}/ -type f -name "*.fastq.gz" -print0 | '
-            "xargs -0 -I {{}} ln -P {{}} {output.read_dir}/"
+            "xargs -0 -I {{}} ln {{}} {output.read_dir}/"
