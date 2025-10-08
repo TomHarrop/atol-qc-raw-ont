@@ -1,8 +1,26 @@
 # Changelog
 
-## (unreleased)
+## 0.1.3 (2025-10-08)
+
+### Changes
+
+* Use compatible hardlink in tarfile.
+
+* Use compatible hardlink in tarfile.
 
 ### Other
+
+* Readme.
+
+* Readme.
+
+* Readme.
+
+* Readme.
+
+* Readme.
+
+* Changelog.
 
 * Readme.
 
