@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5 (2025-10-08)
+
+### Changes
+
+* Don't update the combined log after creation (to bypass Snakemake mtime issue)
+
 ## 0.1.4 (2025-10-08)
 
 ### Changes
