@@ -29,7 +29,7 @@ def main():
 
     # write to stdout
     df[["read_file", "type", "reads", "bases"]].to_csv(
-        sys.stdout, index=False, header=False
+        sys.stdout, index=False, header=True
     )
 
 

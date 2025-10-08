@@ -91,8 +91,9 @@ rule combine_step_logs:
     output:
         Path(logs_directory, "collect_reads.csv"),
     shell:
-        "echo 'read_file,type,reads,bases' > {output} ; "
-        "cat {input} >> {output}"
+        # From https://unix.stackexchange.com/a/558965. Takes the header from
+        # the first file and skips subsequent headers.
+        "gawk '(NR == 1) || (FNR > 1)' {input} > {output}"
 
 
 rule process_step_logs:
