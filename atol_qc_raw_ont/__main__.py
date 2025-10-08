@@ -13,8 +13,9 @@ from snakemake.api import (
     ExecutionSettings,
     OutputSettings,
     StorageSettings,
+    DAGSettings,
 )
-from snakemake.settings.enums import Quietness
+from snakemake.settings.enums import Quietness, RerunTrigger
 
 
 def parse_arguments():
@@ -125,6 +126,9 @@ def main():
         },
     )
 
+    # control rerun triggers
+    dag_settings = DAGSettings(rerun_triggers={RerunTrigger.INPUT})
+
     # other settings
     config_settings = ConfigSettings(config=args.__dict__)
     execution_settings = ExecutionSettings(lock=False)
@@ -139,7 +143,8 @@ def main():
             config_settings=config_settings,
             storage_settings=storage_settings,
         )
-        dag = workflow_api.dag()
+        dag = workflow_api.dag(dag_settings=dag_settings)
+
         dag.execute_workflow(
             executor="dryrun" if args.dry_run else "local",
             execution_settings=execution_settings,
