@@ -2,6 +2,8 @@ shell=/bin/bash
 
 local_version := $(shell python3 -m setuptools_scm)
 tmpdir := $(shell mktemp -d)
+branch := $(shell git rev-parse --abbrev-ref HEAD)
+
 
 test_tarfile:
 	atol-qc-raw-ont \
@@ -32,3 +34,17 @@ test_local:
 		--stats test-output/local/stats.json \
 		--logs test-output/local/logs \
 		--min-length 1000
+
+
+changelog: CHANGELOG.md
+
+CHANGELOG.md: .git/index
+	gitchangelog > $(tmpdir)/CHANGELOG.md
+	apptainer exec docker://davidanson/markdownlint-cli2:v0.13.0 \
+	markdownlint-cli2 \
+	--fix \
+	:$(tmpdir)/CHANGELOG.md || true
+	mv $(tmpdir)/CHANGELOG.md ./CHANGELOG.md
+	git add CHANGELOG.md
+	git commit -m 'changelog !cosmetic'
+	git push origin $(branch)
