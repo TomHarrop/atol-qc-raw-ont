@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.7 (2025-10-09)
+
+### Changes
+
+* Use bbmap to collect porechop output.
+
 ## 0.1.6 (2025-10-09)
 
 ### Changes
