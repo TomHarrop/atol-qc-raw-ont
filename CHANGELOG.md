@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.6 (2025-10-09)
+
+### Changes
+
+* Add sleep to offset clock skew.
+
 ## 0.1.5 (2025-10-08)
 
 ### Changes
