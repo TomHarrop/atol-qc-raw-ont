@@ -93,6 +93,7 @@ rule combine_step_logs:
     shell:
         # From https://unix.stackexchange.com/a/558965. Takes the header from
         # the first file and skips subsequent headers.
+        "sleep 10 ; "
         "gawk '(NR == 1) || (FNR > 1)' {input} > {output}"
 
 
