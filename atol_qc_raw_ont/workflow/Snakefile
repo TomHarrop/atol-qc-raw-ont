@@ -117,17 +117,25 @@ rule filtlong:
         ">> {output} "
         "2> {log}"
 
-
-# filtlong reads the input file twice, so you have to write it to disk :(
+# The glob doesn't get expanded by Snakemake and cat.sh is low memory, so I'm
+# hoping this saves RAM usage for large number of input files.
 rule collect_porechop_results:
     input:
         get_porechop_results,
     output:
         temp(Path(workingdir, "porechop.fastq")),
+    params:
+        reads_dir=lambda wildcards, input: subpath(input[0], parent=True),
+    log:
+        Path(logs_directory, "collect_porechop_results.log"),
     shell:
-        "cat {input} > {output}"
+        "cat.sh "
+        "{params.reads_dir}/*.fastq "
+        "out={output} "
+        "2> {log}"
 
 
+# filtlong reads the input file twice, so you have to write it to disk :(
 rule porechop:
     input:
         Path(workingdir, "collect_reads", "{read_file}.fastq"),
