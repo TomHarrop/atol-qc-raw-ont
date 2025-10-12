@@ -64,7 +64,9 @@ def map_read_file_to_name(reads):
 
 
 globals().update(config)
-workingdir = tempfile.mkdtemp()
+# workingdir = tempfile.mkdtemp()
+workingdir = Path("test-output", "tmp").as_posix()
+
 
 logger.debug(f"Using {workingdir} for intermediate files")
 
@@ -88,6 +90,8 @@ rule compress_output:
         gchist=Path(logs_directory, "gchist.txt"),
     log:
         Path(logs_directory, "compress_output", "reformat.log"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "compress_output", "reformat.txt")
     threads: workflow.cores - 1
     shell:
         "cat {input.pipe} | "
@@ -110,12 +114,15 @@ rule filtlong:
         min_length=min_length,
     log:
         Path(logs_directory, "filtlong.log"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "filtlong.txt")
     shell:
         "filtlong "
         "--min_length {params.min_length} "
         "{input} "
         ">> {output} "
         "2> {log}"
+
 
 # The glob doesn't get expanded by Snakemake and cat.sh is low memory, so I'm
 # hoping this saves RAM usage for large number of input files.
@@ -128,6 +135,8 @@ rule collect_porechop_results:
         reads_dir=lambda wildcards, input: subpath(input[0], parent=True),
     log:
         Path(logs_directory, "collect_porechop_results.log"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "collect_porechop_results.txt")
     shell:
         "cat.sh "
         "{params.reads_dir}/*.fastq "
@@ -143,6 +152,8 @@ rule porechop:
         temp(Path(workingdir, "porechop", "{read_file}.fastq")),
     log:
         Path(logs_directory, "porechop", "{read_file}.log"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "porechop", "{read_file}.txt")
     threads: 1
     shell:
         "porechop "
@@ -161,6 +172,8 @@ rule collect_reads:
         fastq=temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
     log:
         Path(logs_directory, "collect_reads", "{read_file}.log"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "collect_reads", "{read_file}.txt")
     threads: 1
     shell:
         "reformat.sh "

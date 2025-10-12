@@ -79,10 +79,12 @@ rule output_stats:
         template=stats_template,
     output:
         stats,
+    benchmark:
+        Path(logs_directory, "benchmarks", "output_stats.txt")
     params:
         stats=get_stats_params,
-    template_engine:
-        "jinja2"
+    script:
+        "../scripts/render_template.py"
 
 
 rule combine_step_logs:
@@ -90,6 +92,8 @@ rule combine_step_logs:
         get_processed_step_logs,
     output:
         Path(logs_directory, "collect_reads.csv"),
+    benchmark:
+        Path(logs_directory, "benchmarks", "combine_step_logs.txt")
     shell:
         # From https://unix.stackexchange.com/a/558965. Takes the header from
         # the first file and skips subsequent headers. The sleep is necessary
@@ -106,6 +110,8 @@ rule process_step_logs:
         Path(workingdir, "from_logs", "{step}", "{file_name}.txt"),
     output:
         temp(Path(workingdir, "from_logs", "{step}", "{file_name}.csv")),
+    benchmark:
+        Path(logs_directory, "benchmarks", "process_step_logs", "{step}.{file_name}.txt")
     shell:
         "process_step_logs {wildcards.file_name} < {input} > {output} "
 
@@ -115,6 +121,8 @@ rule grep_logs:
         get_logfile,
     output:
         temp(Path(workingdir, "from_logs", "{step}", "{file_name}.txt")),
+    benchmark:
+        Path(logs_directory, "benchmarks", "grep_logs", "{step}.{file_name}.txt")
     shell:
         # awk -F '[[:space:]]{2,}' means separated by two or more spaces
         "grep '^\({log_regex}\)' {input} "

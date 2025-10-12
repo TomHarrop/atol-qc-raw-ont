@@ -149,3 +149,7 @@ def main():
             executor="dryrun" if args.dry_run else "local",
             execution_settings=execution_settings,
         )
+
+
+if __name__ == "__main__":
+    main()

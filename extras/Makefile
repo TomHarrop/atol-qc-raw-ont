@@ -6,7 +6,8 @@ branch := $(shell git rev-parse --abbrev-ref HEAD)
 
 
 test_tarfile:
-	atol-qc-raw-ont \
+	python3 -m cProfile -o "test-output/profiling/tarfile.cProfile.stats" \
+	-m  atol_qc_raw_ont.__main__ \
 		--tarfile test-data/reads_in_directory.tar \
 		--out test-output/tarfile/reads.fastq.gz \
 		--stats test-output/tarfile/stats.json \

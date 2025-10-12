@@ -16,6 +16,8 @@ if reads_tarfile:
             read_dir=directory(Path(workingdir, "readfiles")),
         params:
             tmpdir=lambda wildcards: tempfile.mkdtemp(dir=workingdir),
+        benchmark:
+            Path(logs_directory, "benchmarks", "expand_tarfile.txt")
         shell:
             "mkdir -p {output.read_dir}/ && "
             "tar -xpf {input} -C {params.tmpdir} && "

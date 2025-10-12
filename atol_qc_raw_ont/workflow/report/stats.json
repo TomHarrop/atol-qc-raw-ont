@@ -1,7 +1,7 @@
 {
-    "base_count": {{ params.stats.base_count }},
-    "read_count": {{ params.stats.read_count }},
-    "qc_bases_removed": {{ params.stats.qc_bases_removed }},
-    "mean_gc_content": {{ params.stats.mean_gc_content }},
+    "base_count": {{ stats.base_count }},
+    "read_count": {{ stats.read_count }},
+    "qc_bases_removed": {{ stats.qc_bases_removed }},
+    "mean_gc_content": {{ stats.mean_gc_content }},
     "n50_length": null
 }

@@ -33,10 +33,11 @@ packages = ["atol_qc_raw_ont"]
 
 [tool.setuptools.package-data]
 atol_qc_raw_ont = [
-    "workflow/Snakefile",
+    "workflow/report/stats.json",
     "workflow/rules/single_tarfile.smk",
     "workflow/rules/stats.smk",
-    "workflow/report/stats.json",
+    "workflow/scripts/render_template.py",
+    "workflow/Snakefile",
 ]
 
 [tool.setuptools.exclude-package-data]
