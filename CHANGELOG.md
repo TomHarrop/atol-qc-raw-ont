@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.8 (2025-10-12)
+
+### Changes
+
+* Benchmark everything.
+
+* Render template manually to workaround clock skew bug.
+
 ## 0.1.7 (2025-10-09)
 
 ### Changes
