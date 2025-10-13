@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.10 (2025-10-13)
+
+### Other
+
+* Add sleep for all jobs.
+
 ## 0.1.9 (2025-10-13)
 
 ### Changes
