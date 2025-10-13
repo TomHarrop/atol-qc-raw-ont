@@ -64,9 +64,7 @@ def map_read_file_to_name(reads):
 
 
 globals().update(config)
-# workingdir = tempfile.mkdtemp()
-workingdir = Path("test-output", "tmp").as_posix()
-
+workingdir = tempfile.mkdtemp()
 
 logger.debug(f"Using {workingdir} for intermediate files")
 
