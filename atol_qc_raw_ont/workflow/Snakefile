@@ -68,7 +68,7 @@ def map_read_file_to_name(reads):
 # https://github.com/snakemake/snakemake/issues/3261#issuecomment-2663727316
 # and
 # https://github.com/snakemake/snakemake/issues/3254#issuecomment-2598641487.
-shell.prefix('set -euo pipefail; sleep 1; ')
+shell.prefix('set -euo pipefail; sleep 5; ')
 
 
 globals().update(config)
