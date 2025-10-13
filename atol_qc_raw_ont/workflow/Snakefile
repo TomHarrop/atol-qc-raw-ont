@@ -63,6 +63,14 @@ def map_read_file_to_name(reads):
     return read_file_to_name
 
 
+# The default prefix is 'set -euo pipefail; '. We are adding a sleep to ALL
+# shell commands to bypass a clock skew problem on HPC filesystems. See
+# https://github.com/snakemake/snakemake/issues/3261#issuecomment-2663727316
+# and
+# https://github.com/snakemake/snakemake/issues/3254#issuecomment-2598641487.
+shell.prefix('set -euo pipefail; sleep 1; ')
+
+
 globals().update(config)
 workingdir = tempfile.mkdtemp()
 

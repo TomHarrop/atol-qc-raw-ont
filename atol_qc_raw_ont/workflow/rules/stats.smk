@@ -95,13 +95,6 @@ rule combine_step_logs:
     benchmark:
         Path(logs_directory, "benchmarks", "combine_step_logs.txt")
     shell:
-        # From https://unix.stackexchange.com/a/558965. Takes the header from
-        # the first file and skips subsequent headers. The sleep is necessary
-        # to bypass a clock skew problem on HPC filesystems. See
-        # https://github.com/snakemake/snakemake/issues/3261#issuecomment-2663727316
-        # and
-        # https://github.com/snakemake/snakemake/issues/3254#issuecomment-2598641487.
-        "sleep 10 ; "
         "gawk '(NR == 1) || (FNR > 1)' {input} > {output}"
 
 
