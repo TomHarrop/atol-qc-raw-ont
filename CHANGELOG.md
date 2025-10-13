@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.11 (2025-10-13)
+
+### Changes
+
+* Longer sleep.
+
 ## 0.1.10 (2025-10-13)
 
 ### Other
