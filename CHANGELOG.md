@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.12 (2025-11-28)
+
+### Changes
+
+* Limit reformat processes using global RAM resource.
+
 ## 0.1.11 (2025-10-13)
 
 ### Changes
