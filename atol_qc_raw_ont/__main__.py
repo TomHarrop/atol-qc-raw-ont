@@ -31,6 +31,18 @@ def parse_arguments():
     )
 
     parser.add_argument("-t", "--threads", type=int, default=16, dest="threads")
+    parser.add_argument(
+        "-m",
+        "--mem",
+        help=(
+            "Intended maximum RAM in GB. "
+            "NOTE: some steps (e.g. filtlong) "
+            "don't allow memory usage to be specified by the user."
+        ),
+        type=int,
+        default=32,
+        dest="mem_gb",
+    )
     parser.add_argument("-n", help="Dry run", dest="dry_run", action="store_true")
 
     # inputs
@@ -120,6 +132,7 @@ def main():
     # set cores.
     resource_settings = ResourceSettings(
         cores=args.threads,
+        resources={"mem_mb": int(args.mem_gb * 1024)},
         overwrite_resource_scopes={
             "mem": "global",
             "threads": "global",

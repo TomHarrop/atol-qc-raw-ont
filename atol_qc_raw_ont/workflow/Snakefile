@@ -68,7 +68,7 @@ def map_read_file_to_name(reads):
 # https://github.com/snakemake/snakemake/issues/3261#issuecomment-2663727316
 # and
 # https://github.com/snakemake/snakemake/issues/3254#issuecomment-2598641487.
-shell.prefix('set -euo pipefail; sleep 5; ')
+shell.prefix("set -euo pipefail; sleep 5; ")
 
 
 globals().update(config)
@@ -94,14 +94,19 @@ rule compress_output:
     output:
         reads_out=reads_out,
         gchist=Path(logs_directory, "gchist.txt"),
+    params:
+        mem_mb=lambda wildcards, resources: int(resources.mem_gb * 1024 * 0.9),
     log:
         Path(logs_directory, "compress_output", "reformat.log"),
     benchmark:
         Path(logs_directory, "benchmarks", "compress_output", "reformat.txt")
     threads: workflow.cores - 1
+    resources:
+        mem_gb=mem_gb - 1,
     shell:
         "cat {input.pipe} | "
         "reformat.sh "
+        "-Xmx{params.mem_mb}m "
         "in=stdin.fastq "
         "int=f "
         "out={output.reads_out} "
@@ -122,6 +127,8 @@ rule filtlong:
         Path(logs_directory, "filtlong.log"),
     benchmark:
         Path(logs_directory, "benchmarks", "filtlong.txt")
+    resources:
+        mem_gb=1,
     shell:
         "filtlong "
         "--min_length {params.min_length} "
@@ -139,12 +146,16 @@ rule collect_porechop_results:
         temp(Path(workingdir, "porechop.fastq")),
     params:
         reads_dir=lambda wildcards, input: subpath(input[0], parent=True),
+        mem_mb=lambda wildcards, resources: int(resources.mem_gb * 1024 * 0.9),
     log:
         Path(logs_directory, "collect_porechop_results.log"),
     benchmark:
         Path(logs_directory, "benchmarks", "collect_porechop_results.txt")
+    resources:
+        mem_gb=mem_gb,
     shell:
         "cat.sh "
+        "-Xmx{params.mem_mb}m "
         "{params.reads_dir}/*.fastq "
         "out={output} "
         "2> {log}"
@@ -176,13 +187,18 @@ rule collect_reads:
         get_readfile,
     output:
         fastq=temp(Path(workingdir, "collect_reads", "{read_file}.fastq")),
+    params:
+        mem_mb=lambda wildcards, resources: int(resources.mem_mb * 0.9),
     log:
         Path(logs_directory, "collect_reads", "{read_file}.log"),
     benchmark:
         Path(logs_directory, "benchmarks", "collect_reads", "{read_file}.txt")
     threads: 1
+    resources:
+        mem="2GB",
     shell:
         "reformat.sh "
+        "-Xmx{params.mem_mb}m "
         "in={input} "
         "out={output.fastq} "
         "2>{log}"
