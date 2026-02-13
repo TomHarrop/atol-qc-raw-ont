@@ -20,8 +20,15 @@ apptainer exec \
 ## Usage
 
 > [!TIP]
-> 
-> **Set your locale e.g. using `--env LC_ALL=C` or `APPTAINERENV_LC_ALL=C`**.
+>
+> 1. **Intermediate fastq files are written to disk. Define the `TMPDIR`
+>    variable to control where they are written**.
+>
+> *e.g.* some HPCs map `/tmp` to `/dev/shm`, so the intermediate files could
+> use a lot of RAM. Use `--env TMPDIR=/path/to/tmp` to override this.
+>
+> 2. **Set your locale e.g. using `--env LC_ALL=C` or
+>    `APPTAINERENV_LC_ALL=C`**.
 > 
 > Otherwise filtlong [crashes](https://github.com/rrwick/Filtlong/issues/48)
 > with an error like `locale::facet::_S_create_c_locale name not valid`.
