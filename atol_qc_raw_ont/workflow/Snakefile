@@ -112,8 +112,7 @@ rule compress_output:
         "out={output.reads_out} "
         "gchist={output.gchist} "
         "threads={threads} "
-        "zl=9 "
-        "2>{log}"
+        "2> {log}"
 
 
 rule filtlong:
