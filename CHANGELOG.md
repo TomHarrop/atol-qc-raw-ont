@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 (2026-02-26)
+
+### Changes
+
+* Calculate N50 length and checksums fixes #2 fixes #3.
+
 ## 0.1.12 (2025-11-28)
 
 ### Changes
