@@ -104,10 +104,9 @@ rule compress_output:
     resources:
         mem_gb=mem_gb - 1,
     shell:
-        "cat {input.pipe} | "
         "reformat.sh "
         "-Xmx{params.mem_mb}m "
-        "in=stdin.fastq "
+        "in={input.pipe} "
         "int=f "
         "out={output.reads_out} "
         "gchist={output.gchist} "

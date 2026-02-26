@@ -1,0 +1,56 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "required": [
+        "base_count",
+        "read_count",
+        "qc_bases_removed",
+        "mean_gc_content",
+        "n50_length",
+        "checksums"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "base_count": {
+            "type": "integer"
+        },
+        "read_count": {
+            "type": "integer"
+        },
+        "qc_bases_removed": {
+            "type": "integer"
+        },
+        "mean_gc_content": {
+            "type": "number"
+        },
+        "n50_length": {
+            "type": [
+                "integer",
+                "null"
+            ]
+        },
+        "checksums": {
+            "type": "object",
+            "patternProperties": {
+                ".*": {
+                    "type": "object",
+                    "required": [
+                        "md5",
+                        "sha256"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                        "md5": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{32}$"
+                        },
+                        "sha256": {
+                            "type": "string",
+                            "pattern": "^[a-f0-9]{64}$"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

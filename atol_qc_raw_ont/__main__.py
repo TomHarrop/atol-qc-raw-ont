@@ -106,18 +106,18 @@ def main():
     else:
         raise FileNotFoundError("Could not find a Snakefile")
 
-    stats_template = Path(
-        resources.files(__package__), "workflow", "report", "stats.json"
+    stats_schema = Path(
+        resources.files(__package__), "workflow", "report", "stats_schema.json"
     )
-    if stats_template.is_file():
-        logger.debug(f"Using stats_template {stats_template}")
+    if stats_schema.is_file():
+        logger.debug(f"Using stats_schema {stats_schema}")
     else:
-        raise FileNotFoundError("Could not find a stats_template")
+        raise FileNotFoundError("Could not find a stats_schema")
 
     # get arguments
     args = parse_arguments()
     logger.debug(f"Entrypoint args:\n    {args}")
-    args.stats_template = stats_template
+    args.stats_schema = stats_schema
 
     # control output
     output_settings = OutputSettings(

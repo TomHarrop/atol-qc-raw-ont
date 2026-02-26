@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 
-import jinja2
+import json
+import jsonschema
 from time import sleep
+
 
 def main():
 
@@ -11,15 +13,22 @@ def main():
     # https://github.com/snakemake/snakemake/issues/3261#issuecomment-2663727316
     # and
     # https://github.com/snakemake/snakemake/issues/3254#issuecomment-2598641487.
-    sleep(10)
+    sleep(5)
 
     params = snakemake.params
+    stats = params["stats"]
 
-    with open(snakemake.input["template"], "r") as infile:
-        template = jinja2.Template(infile.read())
+    if "n50_length" not in stats:
+        stats["n50_length"] = None
+
+    with open(snakemake.input["schema"], "r") as f:
+        schema = json.load(f)
+
+    jsonschema.validate(instance=stats, schema=schema)
 
     with open(snakemake.output[0], "w") as outfile:
-        outfile.write(template.render(params))
+        json.dump(stats, outfile)
+        outfile.write("\n")
 
 
 if __name__ == "__main__":

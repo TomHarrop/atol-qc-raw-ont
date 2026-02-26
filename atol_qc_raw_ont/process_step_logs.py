@@ -6,7 +6,7 @@ import pandas as pd
 
 def main():
     # read from stdin
-    df = pd.read_csv(sys.stdin, delimiter="\t", header=None)
+    df = pd.read_csv(sys.stdin, delimiter="\t", header=None, usecols=[0, 1, 2])
 
     # mung the columns
     df.columns = ["V1", "V2", "V3"]
