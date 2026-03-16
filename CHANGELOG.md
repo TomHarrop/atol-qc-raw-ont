@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 (2026-03-16)
+
+### New
+
+* Report qc_reads_removed.
+
 ## 0.2.0 (2026-02-26)
 
 ### Changes
