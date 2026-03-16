@@ -27,6 +27,8 @@ def get_stats_params(wildcards, input):
     length_stats = pd.read_csv(input.length_stats)
 
     input_bases = int(collect_stats["bases"].sum())
+    input_reads = int(collect_stats["reads"].sum())
+
     base_count = int(
         compress_stats.loc[compress_stats["type"] == "Input", "bases"].iloc[0]
     )
@@ -35,6 +37,7 @@ def get_stats_params(wildcards, input):
     )
 
     qc_bases_removed = input_bases - base_count
+    qc_reads_removed = input_reads - read_count
 
     n50_length = int(
         length_stats.loc[length_stats["type"] == "nfifty", "bases"].iloc[0]
@@ -65,6 +68,7 @@ def get_stats_params(wildcards, input):
         "read_count": int(read_count),
         "mean_gc_content": float(mean_gc_content),
         "qc_bases_removed": int(qc_bases_removed),
+        "qc_reads_removed": int(qc_reads_removed),
         "n50_length": int(n50_length),
         "checksums": checksums_dict,
     }

@@ -5,6 +5,7 @@
         "base_count",
         "read_count",
         "qc_bases_removed",
+        "qc_reads_removed",
         "mean_gc_content",
         "n50_length",
         "checksums"
@@ -18,6 +19,9 @@
             "type": "integer"
         },
         "qc_bases_removed": {
+            "type": "integer"
+        },
+        "qc_reads_removed": {
             "type": "integer"
         },
         "mean_gc_content": {
